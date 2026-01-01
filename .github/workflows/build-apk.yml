@@ -1,4 +1,4 @@
-name: Android APK Oluştur
+name: Android APK Olustur
 
 on:
   push:
@@ -7,34 +7,36 @@ on:
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-20.04
     
     steps:
-    - uses: actions/checkout@v3
+    - name: Checkout
+      uses: actions/checkout@v3
     
-    - name: Python Kur
+    - name: Setup Python
       uses: actions/setup-python@v4
       with:
-        python-version: '3.10'
+        python-version: '3.9'
     
-    - name: Java Kur
+    - name: Setup Java
       uses: actions/setup-java@v3
       with:
         distribution: 'temurin'
         java-version: '11'
     
-    - name: Buildozer Kur
+    - name: Install dependencies
       run: |
-        pip install buildozer cython==0.29.33
         sudo apt-get update
-        sudo apt-get install -y git zip unzip openjdk-11-jdk autoconf libtool pkg-config zlib1g-dev libncurses5-dev libncursesw5-dev libtinfo5 cmake libffi-dev libssl-dev
+        sudo apt-get install -y git zip unzip openjdk-11-jdk wget autoconf libtool pkg-config zlib1g-dev libncurses5-dev libncursesw5-dev libtinfo5 cmake libffi-dev libssl-dev
+        pip install --upgrade pip
+        pip install buildozer cython==0.29.33
     
-    - name: APK Oluştur
+    - name: Build APK with Buildozer
       run: |
         yes | buildozer android debug
     
-    - name: APK Yükle
-      uses: actions/upload-artifact@v3
+    - name: Upload APK
+      uses: actions/upload-artifact@v4
       with:
         name: bebek-aglama-app
         path: bin/*.apk
